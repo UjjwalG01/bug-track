@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createBugSchema } from "@/app/validationSchemas";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 
 type BugForm = z.infer<typeof createBugSchema>;
 
@@ -25,6 +26,8 @@ const NewBugPage = () => {
   });
   const router = useRouter();
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   return (
     <div className="max-w-xl mb-3">
       {error && (
@@ -36,9 +39,11 @@ const NewBugPage = () => {
         className="space-y-3"
         onSubmit={handleSubmit(async (data) => {
           try {
+            setIsSubmitting(true);
             await axios.post("/api/bugs", data);
             router.push("/bugs");
           } catch (error) {
+            setIsSubmitting(false);
             setError("Unknow error occured!");
           }
         })}
@@ -55,7 +60,9 @@ const NewBugPage = () => {
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Button>Add New Bug</Button>
+        <Button disabled={isSubmitting}>
+          Add New Bug {isSubmitting && <Spinner />}
+        </Button>
       </form>
     </div>
   );
