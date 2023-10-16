@@ -28,6 +28,17 @@ const NewBugPage = () => {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setIsSubmitting(true);
+      await axios.post("/api/bugs", data);
+      router.push("/bugs");
+    } catch (error) {
+      setIsSubmitting(false);
+      setError("Unknow error occured!");
+    }
+  });
+
   return (
     <div className="max-w-xl mb-3">
       {error && (
@@ -35,19 +46,7 @@ const NewBugPage = () => {
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form
-        className="space-y-3"
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            setIsSubmitting(true);
-            await axios.post("/api/bugs", data);
-            router.push("/bugs");
-          } catch (error) {
-            setIsSubmitting(false);
-            setError("Unknow error occured!");
-          }
-        })}
-      >
+      <form className="space-y-3" onSubmit={onSubmit}>
         <TextField.Root>
           <TextField.Input placeholder="Title" {...register("title")} />
         </TextField.Root>
