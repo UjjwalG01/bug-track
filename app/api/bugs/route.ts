@@ -14,3 +14,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newBug, { status: 201 });
 }
+
+export async function GET() {
+    const bugs = await prisma.bug.findMany();
+    return NextResponse.json(bugs);
+}
